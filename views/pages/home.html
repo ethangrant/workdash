@@ -1,0 +1,28 @@
+{{template "base" .}}
+{{define "content"}}
+<div class="page-head">
+<h1 class="page-title">Dashboard</h1>
+<div class="controls">
+    <button onclick="addTask()">Add +</button>
+    <button>Save</button>
+    <button>Report</button>
+</div>
+</div>
+<form id="timers" action="POST">
+    <div class="timers">
+        <div class="card timer task">
+            <input class="timer-input" type="hidden" placeholder="Ticket" name="id">
+            <div><input class="timer-input" type="text" placeholder="Ticket" name="title"></div>
+            <div><input class="timer-input desc" type="text" placeholder="Description" name="desc"></div>
+            <div>
+                <span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span>
+            </div>
+            <div class="controls">
+                <button onclick="startTimer(this)">Start</button>
+                <button onclick="stopTimer(this)">Stop</button>
+                <button onclick="clearTimer(this)">Clear</button>
+            </div>
+        </div>
+    </div>
+</form>
+{{end}}
