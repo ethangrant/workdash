@@ -17,8 +17,8 @@ const dbFile string = "/tmp/workdash.db"
 
 func dbInit() *sql.DB {
 	createSqliteFile()
-	conn := connect();
-	runMigrations(conn);
+	conn := connect()
+	runMigrations(conn)
 
 	return conn
 }
@@ -35,7 +35,7 @@ func createSqliteFile() {
 	}
 }
 
-func connect() (*sql.DB) {
+func connect() *sql.DB {
 	c, err := sql.Open("sqlite3", dbFile)
 	if err != nil {
 		fmt.Println("Failed to connect to database: ", err.Error())
@@ -48,7 +48,7 @@ func connect() (*sql.DB) {
 func runMigrations(conn *sql.DB) {
 	driver, err := sqlite3.WithInstance(conn, &sqlite3.Config{})
 	if err != nil {
-		fmt.Println("Migrations failed: " , err.Error())
+		fmt.Println("Migrations failed: ", err.Error())
 		os.Exit(1)
 	}
 
@@ -59,7 +59,7 @@ func runMigrations(conn *sql.DB) {
 	)
 
 	if err != nil {
-		fmt.Println("Migrations failed: " , err.Error())
+		fmt.Println("Migrations failed: ", err.Error())
 		os.Exit(1)
 	}
 

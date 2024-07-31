@@ -118,3 +118,7 @@ nav > div > a.active {
     outline-width: 0;
     border-bottom: 1px solid grey;
 }
+
+.boilerplate {
+    display: none;
+}

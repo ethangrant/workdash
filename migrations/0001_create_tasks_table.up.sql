@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS tasks (
-			id INTEGER NOT NULL PRIMARY KEY,
+			id TEXT NOT NULL PRIMARY KEY,
 			title TEXT NOT NULL,
-			desc TEXT,
+			description TEXT,
 			duration INTEGER,
-            category TEXT
-			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            category TEXT,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		)

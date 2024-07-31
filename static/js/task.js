@@ -1,6 +1,16 @@
 function addTask() {
-    let taskEl = document.querySelector('.task').cloneNode(true);
+    let taskEl = document.querySelector('.task.boilerplate').cloneNode(true);
+    taskEl.classList.remove('boilerplate');
+    taskEl.querySelector('input[name="title"]').focus()
+
+    assignUuid(taskEl);
+
     document.querySelector('.timers').append(taskEl);
+}
+
+function assignUuid(task) {
+    uuid = crypto.randomUUID();
+    task.querySelector('input[name="id"]').value = uuid; 
 }
 
 /**
@@ -49,7 +59,7 @@ function postTasks(payload) {
  */
 function tasksAsJson() {
     let tasks = [];
-    let taskElements = document.querySelectorAll('.task')
+    let taskElements = document.querySelectorAll('.task:not(.boilerplate)')
 
     taskElements.forEach((taskEl, index) => {
         let task = {}

@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
 )
 
-func Home(templates map[string]*template.Template) http.HandlerFunc {
+func Home(templates map[string]*template.Template, dbConn *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		t, ok := templates["home.html"]
 		if !ok {
