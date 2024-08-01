@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -27,6 +26,9 @@ func PostTasks(templates map[string]*template.Template, dbConn *sql.DB) http.Han
 		}
 
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Tasks have been saved!")
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(
+			services.NewSuccessMessage("Your tasks have been saved successfully!"),
+		)
 	}
 }
