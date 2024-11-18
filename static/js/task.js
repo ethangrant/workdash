@@ -47,7 +47,9 @@ function postTasks(payload) {
         body: payload
     })
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => {
+        addMessage(data)
+    })
     .catch(error => console.error('Error:', error));
 }
 

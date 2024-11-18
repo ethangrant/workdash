@@ -18,6 +18,7 @@ func main() {
 
 	http.HandleFunc("/", handlers.Home(templateFiles, dbConn))
 	http.HandleFunc("/dashboard", handlers.Home(templateFiles, dbConn))
+	http.HandleFunc("/react", handlers.React(templateFiles, dbConn))
 
 	http.HandleFunc("/postTasks", handlers.PostTasks(templateFiles, dbConn))
 

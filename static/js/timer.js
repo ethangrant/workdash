@@ -35,7 +35,7 @@ function startTimer(button) {
         secondsEl.innerHTML = pad(++sec % 60);
         minutesEl.innerHTML = pad(parseInt(sec / 60 % 60, 10));
         hoursEl.innerHTML = pad(parseInt(sec / 3600 % 60, 10));
-    }, 1000);
+    }, 10);
 }
 
 /**
@@ -85,3 +85,7 @@ function clearTimer(button) {
 
     clearInterval(globalTimer);
 }
+
+// create web working responsible for handling timer
+// send message to main thread to update element on the FE
+// send message back to webworker to halt the timer.
