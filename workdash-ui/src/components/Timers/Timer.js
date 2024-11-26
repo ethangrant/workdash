@@ -1,15 +1,22 @@
 import { useState, useRef, useEffect } from "react"
 
-export default function Timer() {
+export default function Timer({id, isRunning, onStart}) {
   const startTime = useRef(0);
   const timerId = useRef(0);
 
-  const [isRunning, setIsRunning] = useState(false);
   const [totalTime, setTotalTime] = useState(0);
 
   useEffect(() => {
     clearTimeout(timerId.current);
   }, []);
+
+  // current timer should be stopped if another timer has started
+  useEffect(() => {
+    if (!isRunning) {
+      handleStopTimer();
+      return;
+    }
+  }, [isRunning]);
 
   function handleStartTimer() {
     if (isRunning) {
@@ -17,19 +24,28 @@ export default function Timer() {
     }
 
     startTime.current = Date.now() - totalTime;
-    setIsRunning(true);
+
+    // tell parent this timer is currently active
+    onStart(id)
     incrementTimer();
   }
 
   function handleStopTimer() {
     clearTimeout(timerId.current);
-    setIsRunning(false);
+
+    if (isRunning) {
+      onStart(null)
+    }
   }
 
   function handleClearTimer() {
     clearTimeout(timerId.current);
-    setIsRunning(false);
     setTotalTime(0);
+
+    // clear running timer id if this timer was currently running
+    if (isRunning) {
+      onStart(null)
+    }
   }
 
   function incrementTimer() {
