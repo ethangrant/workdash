@@ -1,0 +1,10 @@
+.timers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.timer-panel {
+  display: flex;
+  flex-direction: column;
+}
