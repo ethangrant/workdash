@@ -1,75 +1,98 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react";
+import Button from "../Button";
+import InputText from "../InputText";
 
-export default function Timer({id, isRunning, onStart}) {
+export default function Timer({ id, title, description, duration, isRunning, onStart, onUpdateTimerState, onRemove }) {
   const startTime = useRef(0);
-  const timerId = useRef(0);
+  const timerRef = useRef(null);
+  const [totalTime, setTotalTime] = useState(duration);
+  const [currentTitle, setCurrentTitle] = useState(title);
+  const [currentDescription, setCurrentDescription] = useState(description);
 
-  const [totalTime, setTotalTime] = useState(0);
+  const updateTimerState = useCallback(() => {
+    onUpdateTimerState(id, currentTitle, currentDescription, totalTime);
+  }, [id, currentTitle, currentDescription, totalTime, onUpdateTimerState]);
 
-  useEffect(() => {
-    clearTimeout(timerId.current);
-  }, []);
-
-  // current timer should be stopped if another timer has started
-  useEffect(() => {
-    if (!isRunning) {
-      handleStopTimer();
-      return;
+  const handleStopTimer = useCallback(() => {
+    if (timerRef.current) {
+      cancelAnimationFrame(timerRef.current);
+      timerRef.current = null;
     }
-  }, [isRunning]);
-
-  function handleStartTimer() {
     if (isRunning) {
-      return;
+      onStart(null);
+      updateTimerState();
     }
+  }, [isRunning, onStart, updateTimerState]);
+
+  const incrementTimer = useCallback(() => {
+    const elapsedTime = Date.now() - startTime.current;
+    setTotalTime(elapsedTime);
+    onUpdateTimerState(id, currentTitle, currentDescription, elapsedTime);
+
+    timerRef.current = requestAnimationFrame(incrementTimer);
+  }, [currentDescription, currentTitle, id, onUpdateTimerState]);
+
+  const handleStartTimer = () => {
+    if (isRunning) return;
 
     startTime.current = Date.now() - totalTime;
-
-    // tell parent this timer is currently active
-    onStart(id)
+    onStart(id);
     incrementTimer();
-  }
+  };
 
-  function handleStopTimer() {
-    clearTimeout(timerId.current);
-
-    if (isRunning) {
-      onStart(null)
-    }
-  }
-
-  function handleClearTimer() {
-    clearTimeout(timerId.current);
+  const handleClearTimer = () => {
+    handleStopTimer();
     setTotalTime(0);
+    onUpdateTimerState(id, currentTitle, currentDescription, 0);
+  };
 
-    // clear running timer id if this timer was currently running
-    if (isRunning) {
-      onStart(null)
+  useEffect(() => {
+    // Stop the timer if another timer starts
+    if (!isRunning) {
+      handleStopTimer();
     }
-  }
+  }, [isRunning, handleStopTimer]);
 
-  function incrementTimer() {
-    let elaspedTime = Date.now() - startTime.current;
+  const handleTitleChange = (e) => {
+    setCurrentTitle(e.target.value);
+    onUpdateTimerState(id, e.target.value, currentDescription, totalTime);
+  };
 
-    setTotalTime(elaspedTime);
-    timerId.current = setTimeout(incrementTimer, 10)
+  const handleDescriptionChange = (e) => {
+    setCurrentDescription(e.target.value);
+    onUpdateTimerState(id, currentTitle, e.target.value, totalTime);
+  };
+
+  const handleRemoveTimer = () => {
+    onRemove(id);
   }
 
   const time = new Date(totalTime);
-  const hours = String(time.getUTCHours()).padStart(2, '0');
-  const minutes = String(time.getUTCMinutes()).padStart(2, '0');
-  const seconds = String(time.getUTCSeconds()).padStart(2, '0');
+  const hours = String(time.getUTCHours()).padStart(2, "0");
+  const minutes = String(time.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(time.getUTCSeconds()).padStart(2, "0");
 
   return (
-    <div className="card timer task">
-      <div className="time">
+    <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <InputText name={'title'} value={currentTitle} onChange={handleTitleChange} className="mb-3" />
+      <InputText name={'description'} value={currentDescription} onChange={handleDescriptionChange} className="mb-3"/>
+      <div className="text-center text-lg">
         <span className="hours">{hours}</span>:<span className="minutes">{minutes}</span>:<span className="seconds">{seconds}</span>
       </div>
       <div className="controls">
-            <button onClick={handleStartTimer}>Start</button>
-            <button onClick={handleStopTimer}>Stop</button>
-            <button onClick={handleClearTimer}>Clear</button>
-        </div>
+        <Button onClick={handleStartTimer} disabled={isRunning} type={isRunning ? 'primary' : 'secondary'}>
+          Start
+        </Button>
+        <Button onClick={handleStopTimer} type={'secondary'}>
+          Stop
+        </Button>
+        <Button onClick={handleClearTimer} type={'secondary'}>
+          Clear
+        </Button>
+        <Button onClick={handleRemoveTimer} type={'destructive'}>
+          Remove
+        </Button>
+      </div>
     </div>
-  )
+  );
 }
